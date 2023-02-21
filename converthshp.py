@@ -1,5 +1,6 @@
 import healsparse as hs
 import healpy as hp
+import numpy as np
 from optparse import OptionParser
 
 def main():
@@ -10,21 +11,29 @@ def main():
     parser.add_option("--nside_out",type="int",dest="nside_out",help="nside of output file",default=4096)
     parser.add_option("--nest",action="store_true",dest="isnest",help="Toggle NEST to True",default=False)
     parser.add_option("--healpix",action="store_true",dest="ishealpix",help="Toggle healpix format to True",default=False)
+    parser.add_option("--mask",action="store_true",dest="applymask",help="Toggle mask application to True",default=False)
+    parser.add_option("--input_file_maskname",type="string",dest="maskname",help="Mask file",default='/pool/cosmo01_data1/des/y6_sp_maps/official_v1/outliers_analysis/bao_mask/jointmasks/Y6LSSBAO_V2_MASK_WITHDEPTH_up_to_22.5_jointmask_0.01percent_sb_mean_0.5max_val_neb_mean_gcs_bit64.fits.gz')
     parser.add_option("--output_healsparse",action="store_true",dest="ouths",help="Toggle healsparse output",default=False)
     parser.add_option("--output_dir",type="string",dest="outdir",help="Output directory",default='./')
     parser.add_option("--output_file_mapname",type="string",dest="mapname",help="Output file map name",default='MAPNAME')
     parser.add_option("--output_file_statname",type="string",dest="statname",help="Output file stat name",default='STATNAME')
     parser.add_option("--output_file_bandname",type="string",dest="bandname",help="Output file band name",default=None)
     (options, args) = parser.parse_args()
-    
+     
     print('Selected NEST',options.isnest)
     print('nside',options.nside_out)
 
     #read a map
     print('Reading map',options.infilename)
     print('Selected input format as Healpix',options.ishealpix)
+    if options.applymask:
+        print('Applying mask',options.maskname)
     if options.ishealpix:
         inmap = hp.read_map(options.infilename, nest = options.isnest)
+        if options.applymask:
+            maskmap = hp.read_map(options.maskname,nest=False,partial=True)
+            mask = np.where(maskmap == hp.UNSEEN) #masked out regions assumed to be assigned UNSEEN 
+            inmap[mask[0]] = hp.UNSEEN
     else:
         inmap = hs.HealSparseMap.read(options.infilename, options.nside_coverage)
 
