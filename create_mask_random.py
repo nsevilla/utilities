@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 This script will create a random catalog on specified RA,DEC range, and optionally mask it with healpix file
-Author: Nacho Sevilla
+Author:  Nacho Sevilla
 '''
 import numpy as np
 import healpy as hp
@@ -48,7 +48,7 @@ def mask_healpix(cat, mask_filename, nest):
     phi = cat[0]*np.pi/180.
     nside = hp.npix2nside(good_region_mask.size)
     pix = hp.ang2pix(nside,theta,phi,nest=nest)
-    good, = np.where(good_region_mask[pix] == 1)
+    good, = np.where(good_region_mask[pix] > 0)
 
     cat_masked = np.array([cat[0][good],cat[1][good]])
     
