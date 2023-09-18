@@ -4,6 +4,7 @@ This script will plot the amount of obscuration in a MAIN sample from a BRIGHT s
 Author: Nacho Sevilla, based on work from Jelena Aleksic
 Usage: python obscuration.py --bright_catalog [CATALOG WITH OBSCURING OBJECTS] --main_catalog [MAIN CATALOG] 
 '''
+
 import numpy as np
 import os,sys
 import sklearn
